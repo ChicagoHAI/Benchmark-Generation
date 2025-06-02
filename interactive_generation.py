@@ -58,7 +58,7 @@ def chat_message (sentence):
 
 def interactive (sentence):
     for counter in range(5):
-        print(chat_message(sentence + " first ask for details, don't generate directly"))
+        print(chat_message(sentence + " first ask for details and give short examples, don't generate the whole benchmark directly"))
         sentence = ask_input()
     print(chat_message(sentence + " Now, generate the benchmark. Remember to provide not only the questions but also the answers"))
     return None
