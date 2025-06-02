@@ -29,6 +29,12 @@ class Tee:
             except (ValueError, OSError):
                 pass
 
+def ask_input(prompt = "Input here: "):
+    sentence = input(prompt)
+    f.write(sentence + "\n")
+    f.flush()
+    return sentence
+
 
 def chat (sentence):
     user_message = {
@@ -53,8 +59,8 @@ def chat_message (sentence):
 def interactive (sentence):
     for counter in range(5):
         print(chat_message(sentence + " first ask for details, don't generate directly"))
-        sentence = input("Input here:")
-    print(chat_message(sentence + "Now, generate the benchmark."))
+        sentence = ask_input()
+    print(chat_message(sentence + " Now, generate the benchmark."))
     return None
 
 
@@ -62,5 +68,5 @@ if __name__=="__main__":
     with open("output.txt", "a") as f:
         tee = Tee(sys.stdout, f)
         sys.stdout = tee
-        sentence = input(" Please provide the detail of the benchmark you want to generate: ")
+        sentence = ask_input("Please provide the detail of the benchmark you want to generate: ")
         interactive(sentence)
