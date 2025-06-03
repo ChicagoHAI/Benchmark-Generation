@@ -57,14 +57,17 @@ def chat_message (sentence):
 
 
 def interactive (sentence):
-    for counter in range(5):
-        print(chat_message(sentence + " rememver to consider the potential ambiguities \
+    print(chat_message(sentence + " rememver to consider the potential ambiguities \
         in the benchmark generation requirements, ask clarifying questions and details about the benchmark. \
         Don't generate the whole benchmark directly."))
+    sentence = ask_input()
+    for counter in range(5):
+        print(chat_message(sentence + " consider all the interactions and discussions we had before. \
+            You can also try to search the Internet for reference."))
         sentence = ask_input()
     print(chat_message(sentence + " Now, given all the details, incorporate \
-        the answers to the clarifying questions to generate the benchmark samples. \
-        Remember to provide not only the questions but also the answers"))
+        all our interactions and discussions to generate the benchmark samples. \
+        Remember to provide not only the questions but also the answers."))
     return None
 
 
