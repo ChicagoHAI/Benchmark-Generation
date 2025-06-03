@@ -59,7 +59,8 @@ def chat_message (sentence):
 def interactive (sentence):
     print(chat_message(sentence + " rememver to consider the potential ambiguities \
         in the benchmark generation requirements, ask clarifying questions and details about the benchmark. \
-        Don't generate the whole benchmark directly."))
+        Take especial focus on the criteria of the benchmark. Think how should the rubric for the benchmark be formed,\
+        and provide ideas on rubric formation. Don't generate the whole benchmark directly."))
     sentence = ask_input()
     for counter in range(5):
         print(chat_message(sentence + " consider all the interactions and discussions we had before. \
