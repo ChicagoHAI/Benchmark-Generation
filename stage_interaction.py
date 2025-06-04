@@ -22,7 +22,7 @@ stage_one_prompt = ["Help me to think deeply about the specific task this benchm
                     going to test and help me to narrow down the scope of the benchmark. \
                     ask clarifying questions about any ambiguities. Do we want to test the generation ability \
                     or the evaluation ability? Do we want to have a wide range or a small range to cover in the \
-                    benchmark? (For example, If I say generate \
+                    benchmark? What kind of difficulty do we want the benchmark to range? (For example, If I say generate \
                     a benchmark about math, you ask questions and give advice to help me think about the \
                     specific math problem I want. Do I want to test algebra? Calculus? Statistics? or maybe Linear Algebra? \
                     and what specific type of algebra question? Statistic questions? or Calculus questions?)", 
