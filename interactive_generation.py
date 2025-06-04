@@ -9,7 +9,7 @@ data = {
     "model": "Qwen/Qwen2.5-7B-Instruct",
     "messages": [
     ]
-    }
+}
 
 import sys
 
@@ -36,7 +36,7 @@ def ask_input(prompt = "Input here: "):
     return sentence
 
 
-def chat (sentence):
+def chat(sentence):
     user_message = {
             "role": "user",
             "content": sentence
@@ -46,7 +46,7 @@ def chat (sentence):
     return response.json()
 
 
-def chat_message (sentence):
+def chat_message(sentence):
     response = chat(sentence)
     assistant_message = {
         "role": "assistant",
