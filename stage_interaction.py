@@ -1,23 +1,40 @@
 import requests
+import sys
 url = "http://indigo.cs.uchicago.edu:8000/v1/chat/completions"
-
 headers = {
     "Content-Type": "application/json"
 }
-
 data = {
     "model": "Qwen/Qwen2.5-7B-Instruct",
     "messages": [
     ]
 }
-
 summary = []
+class Tee:
+    def __init__(self, *streams):
+        self.streams = streams
 
+    def write(self, message):
+        for s in self.streams:
+            s.write(message)
+            s.flush()  # Ensure it writes immediately
+
+    def flush(self):
+        for s in self.streams:
+            try:
+                s.flush()
+            except (ValueError, OSError):
+                pass
+
+
+############################################## Program Starts Here #####################################################
+# loop_time setting here
 stage_one_loop_time = 2
 stage_two_loop_time = 2
 stage_three_loop_time = 2
 stage_four_loop_time = 1
 
+# prompt setting here
 stage_one_prompt = ["Help me to think deeply about the specific task this benchmark is \
                     going to test and help me to narrow down the scope of the benchmark. \
                     ask clarifying questions about any ambiguities. Do we want to test the generation ability \
@@ -46,27 +63,16 @@ stage_four_prompt = ["We have discussed on what specific task we want out benchm
                       source of data we want to evaluate on with the benchmark, and the specific rubrics we want \
                       to be included in the benchmark. Here is a summary you made for our previous \
                       discussions. Now, I want you to start generate this benchmark.", ""]
+intermediate_prompt = " consider all the interactions and discussions we had before. \
+                        You can also try to search the Internet for reference. Remember our focus is on \
+                        iscussing and reaching a conclusion on what exactly we want, instead of merely generating\
+                        a benchmark. Therefore, don't generate the whole benchmark directly. Only give samples \
+                        and ask for feedbacks to further the discussion."
 
-import sys
-
-class Tee:
-    def __init__(self, *streams):
-        self.streams = streams
-
-    def write(self, message):
-        for s in self.streams:
-            s.write(message)
-            s.flush()  # Ensure it writes immediately
-
-    def flush(self):
-        for s in self.streams:
-            try:
-                s.flush()
-            except (ValueError, OSError):
-                pass
 
 def ask_input(prompt = "Input here: "):
     sentence = input(prompt)
+    # write to the output.txt file
     f.write(sentence + "\n")
     f.flush()
     return sentence
@@ -87,7 +93,7 @@ def chat_message (sentence):
     assistant_message = {
         "role": "assistant",
         "content": response["choices"][0]['message']['content']
-        }
+    }
     data["messages"].append(assistant_message)
     return response["choices"][0]['message']['content']
 
@@ -102,11 +108,7 @@ def interactive(sentence, loop_time, start_prompt, end_prompt, stage):
     sentence = ask_input()
     for counter in range(loop_time):
         if (stage != 4):
-            print(chat_message(sentence + " consider all the interactions and discussions we had before. \
-                You can also try to search the Internet for reference. Remember our focus is on \
-                iscussing and reaching a conclusion on what exactly we want, instead of merely generating\
-                a benchmark. Therefore, don't generate the whole benchmark directly. Only give samples \
-                and ask for feedbacks to further the discussion."))
+            print(chat_message(sentence + intermediate_prompt))
         else:
             print(chat_message(sentence))
         sentence = ask_input()
