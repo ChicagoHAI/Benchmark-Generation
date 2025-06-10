@@ -9,8 +9,8 @@ BASE_URL = "http://indigo.cs.uchicago.edu:8000/v1"
 API_KEY = "sk"  # dummy key if not needed
 MODEL_NAME = "Qwen/Qwen2.5-7B-Instruct"
 
-# Load samples for testing
-dataset = load_dataset("gsm8k", "main", split="test[:1000]")
+# Load 10 samples for testing (adjust "test[:10]" to more samples if needed)
+dataset = load_dataset("gsm8k", "main", split="test[:20]")
 
 def format_prompt(question):
     return f"Question: {question}\nAnswer:"
@@ -41,8 +41,10 @@ def query_model(prompt):
     response.raise_for_status()
     return response.json()["choices"][0]["text"]
 
-# Prepare lists for JSON output
+# Prepare lists for JSON output.
+# Now we store the original problem, the model's answer, and a correctness label.
 results = {
+    "problems": [],
     "answers": [],
     "label": []
 }
@@ -54,29 +56,29 @@ wrong_examples = []
 for i, example in enumerate(dataset):
     question = example["question"]
     gt_answer = extract_answer(example["answer"])
-
+    
     prompt = format_prompt(question)
     model_output = query_model(prompt)
-
+    
     clean_output = get_first_answer(model_output)
     pred_answer = extract_answer(clean_output)
-
+    
     print("=" * 60)
     print(f"Q{i+1}: {question}")
     print("Model Output:", model_output.strip())
     print("Cleaned Output:", clean_output)
     print("Ground Truth:", gt_answer)
     print("Predicted:", pred_answer)
-
-    # Record cleaned output and label in our JSON result
+    
+    # Append the original problem, the model answer, and the label to our results dictionary
+    results["problems"].append(question)
+    results["answers"].append(clean_output)
+    
     if pred_answer == gt_answer:
-        results["answers"].append(clean_output)
         results["label"].append("correct")
         correct += 1
     else:
-        results["answers"].append(clean_output)
         results["label"].append("wrong")
-        # Save the entire example info for later review
         wrong_examples.append({
             "index": i+1,
             "question": question,
@@ -88,7 +90,6 @@ for i, example in enumerate(dataset):
 
 print(f"\n✅ Accuracy: {correct}/{len(dataset)} = {correct / len(dataset):.2%}")
 
-# Print all wrong examples
 print("\n\n--- Wrong Predictions ---")
 for we in wrong_examples:
     print(f"Q{we['index']}: {we['question']}")
@@ -98,8 +99,8 @@ for we in wrong_examples:
     print(f"Cleaned Output: {we['cleaned_output']}")
     print("-" * 60)
 
-# Write the results to a JSON file
-with open("GSM8k_train.json", "w") as f:
+# Write the results to a JSON file that includes the problem, the answer, and the label
+with open("results.json", "w") as f:
     json.dump(results, f, indent=4)
 
 print("\nResults have been written to results.json.")
