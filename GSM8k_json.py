@@ -9,8 +9,8 @@ BASE_URL = "http://indigo.cs.uchicago.edu:8000/v1"
 API_KEY = "sk"  # dummy key if not needed
 MODEL_NAME = "Qwen/Qwen2.5-7B-Instruct"
 
-# Load 10 samples for testing (adjust to 100 if needed)
-dataset = load_dataset("gsm8k", "main", split="test[:10]")
+# Load samples for testing
+dataset = load_dataset("gsm8k", "main", split="test[:100]")
 
 def format_prompt(question):
     return f"Question: {question}\nAnswer:"
