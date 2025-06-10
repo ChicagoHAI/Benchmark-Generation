@@ -10,7 +10,7 @@ API_KEY = "sk"  # dummy key if not needed
 MODEL_NAME = "Qwen/Qwen2.5-7B-Instruct"
 
 # Load samples for testing
-dataset = load_dataset("gsm8k", "main", split="test[:100]")
+dataset = load_dataset("gsm8k", "main", split="test[:1000]")
 
 def format_prompt(question):
     return f"Question: {question}\nAnswer:"
