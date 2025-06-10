@@ -43,7 +43,7 @@ def query_model(prompt):
 
 # Prepare lists for JSON output
 results = {
-    "questions": [],
+    "answers": [],
     "label": []
 }
 
@@ -70,11 +70,11 @@ for i, example in enumerate(dataset):
 
     # Record cleaned output and label in our JSON result
     if pred_answer == gt_answer:
-        results["questions"].append(clean_output)
+        results["answers"].append(clean_output)
         results["label"].append("correct")
         correct += 1
     else:
-        results["questions"].append(clean_output)
+        results["answers"].append(clean_output)
         results["label"].append("wrong")
         # Save the entire example info for later review
         wrong_examples.append({
