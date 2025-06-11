@@ -1,0 +1,72 @@
+{
+    "Answers that include numerical calculations that are precise and accurate are more likely to be correct, while answers that contain rounding errors or miscalculations are more likely to be incorrect.": {
+        "hypothesis": "Answers that include numerical calculations that are precise and accurate are more likely to be correct, while answers that contain rounding errors or miscalculations are more likely to be incorrect.",
+        "acc": 0.0,
+        "num_visits": 10,
+        "reward": 0.23992629560940407,
+        "correct_examples": []
+    },
+    "Answers that include a clear and logical step-by-step explanation of the solution process are more likely to be correct, while answers that lack detailed reasoning or skip steps are more likely to be incorrect.": {
+        "hypothesis": "Answers that include a clear and logical step-by-step explanation of the solution process are more likely to be correct, while answers that lack detailed reasoning or skip steps are more likely to be incorrect.",
+        "acc": 0.0,
+        "num_visits": 10,
+        "reward": 0.23992629560940407,
+        "correct_examples": []
+    },
+    "Answers that correctly utilize mathematical terminology and notation are more likely to be correct, whereas answers that misuse or omit key terms and symbols are more likely to be incorrect.": {
+        "hypothesis": "Answers that correctly utilize mathematical terminology and notation are more likely to be correct, whereas answers that misuse or omit key terms and symbols are more likely to be incorrect.",
+        "acc": 0.0,
+        "num_visits": 10,
+        "reward": 0.23992629560940407,
+        "correct_examples": []
+    },
+    "Answers that check or verify their results through substitution or alternative methods are more likely to be correct, while answers that do not include any form of verification are more likely to be incorrect.": {
+        "hypothesis": "Answers that check or verify their results through substitution or alternative methods are more likely to be correct, while answers that do not include any form of verification are more likely to be incorrect.",
+        "acc": 0.0,
+        "num_visits": 10,
+        "reward": 0.23992629560940407,
+        "correct_examples": []
+    },
+    "Answers that show consistent use of mathematical operations and follow the order of operations correctly are more likely to be correct, while answers that exhibit errors in operation order or inconsistent calculations are more likely to be incorrect.": {
+        "hypothesis": "Answers that show consistent use of mathematical operations and follow the order of operations correctly are more likely to be correct, while answers that exhibit errors in operation order or inconsistent calculations are more likely to be incorrect.",
+        "acc": 0.0,
+        "num_visits": 10,
+        "reward": 0.23992629560940407,
+        "correct_examples": []
+    },
+    "Answers that are concise yet comprehensive, covering all necessary aspects of the problem without unnecessary information, are more likely to be correct, while answers that are overly verbose or lack focus are more likely to be incorrect.": {
+        "hypothesis": "Answers that are concise yet comprehensive, covering all necessary aspects of the problem without unnecessary information, are more likely to be correct, while answers that are overly verbose or lack focus are more likely to be incorrect.",
+        "acc": 0.0,
+        "num_visits": 10,
+        "reward": 0.23992629560940407,
+        "correct_examples": []
+    },
+    "Answers that demonstrate an understanding of the problem context and relate the solution back to the original question are more likely to be correct, while answers that stray from the problem context or fail to address the question are more likely to be incorrect.": {
+        "hypothesis": "Answers that demonstrate an understanding of the problem context and relate the solution back to the original question are more likely to be correct, while answers that stray from the problem context or fail to address the question are more likely to be incorrect.",
+        "acc": 0.0,
+        "num_visits": 10,
+        "reward": 0.23992629560940407,
+        "correct_examples": []
+    },
+    "Answers that anticipate and address potential pitfalls or common mistakes related to the problem are more likely to be correct, while answers that overlook these issues are more likely to be incorrect.": {
+        "hypothesis": "Answers that anticipate and address potential pitfalls or common mistakes related to the problem are more likely to be correct, while answers that overlook these issues are more likely to be incorrect.",
+        "acc": 0.0,
+        "num_visits": 10,
+        "reward": 0.23992629560940407,
+        "correct_examples": []
+    },
+    "Answers that correctly identify and apply relevant mathematical concepts or theorems are more likely to be correct, while answers that misapply concepts or fail to identify relevant theorems are more likely to be incorrect.": {
+        "hypothesis": "Answers that correctly identify and apply relevant mathematical concepts or theorems are more likely to be correct, while answers that misapply concepts or fail to identify relevant theorems are more likely to be incorrect.",
+        "acc": 0.0,
+        "num_visits": 10,
+        "reward": 0.23992629560940407,
+        "correct_examples": []
+    },
+    "Answers that provide a final answer with appropriate units (if applicable) are more likely to be correct, while answers that omit units or provide incorrect units are more likely to be incorrect.": {
+        "hypothesis": "Answers that provide a final answer with appropriate units (if applicable) are more likely to be correct, while answers that omit units or provide incorrect units are more likely to be incorrect.",
+        "acc": 0.0,
+        "num_visits": 10,
+        "reward": 0.23992629560940407,
+        "correct_examples": []
+    }
+}
