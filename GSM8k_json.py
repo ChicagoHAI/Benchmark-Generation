@@ -46,6 +46,7 @@ results = {
     "solutions": [],     
     "answers": [],         
     "label": []            
+}
 
 correct = 0
 wrong_examples = []
