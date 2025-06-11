@@ -13,7 +13,7 @@ MODEL_NAME = "Qwen/Qwen2.5-7B-Instruct"
 dataset = load_dataset("gsm8k", "main", split="test[:10]")
 
 def format_prompt(question):
-    return f"Question: {question}\nAnswer:"
+    return f"{question}\n"
 
 def extract_answer(text):
     matches = re.findall(r"[-+]?\d*\.\d+|\d+", text)
