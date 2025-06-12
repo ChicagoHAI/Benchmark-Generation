@@ -1,14 +1,10 @@
-#!/usr/bin/env python3
 import json
 import sys
 import requests
 
-# –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
-# your existing LLM endpoint & helpers
 url = "http://indigo.cs.uchicago.edu:8000/v1/chat/completions"
 headers = {"Content-Type": "application/json"}
 
-# reuse the same payload template, but messages will accumulate.
 data = {
     "model": "Qwen/Qwen2.5-7B-Instruct",
     "messages": []
@@ -28,8 +24,6 @@ def chat_message(sentence: str) -> str:
     }
     data["messages"].append(assistant_message)
     return assistant_message["content"]
-# –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
-
 
 def load_problems(json_path: str) -> list[str]:
     with open(json_path, 'r', encoding='utf-8') as f:
@@ -42,9 +36,7 @@ def load_problems(json_path: str) -> list[str]:
         raise ValueError("All items in 'problems' must be strings")
     return probs
 
-
 def main():
-    # Usage: script.py INPUT_JSON [OUTPUT_JSON]
     if len(sys.argv) not in (2, 3):
         print(f"Usage: {sys.argv[0]} ./GSM8k/failing_questions.json [out.json]", file=sys.stderr)
         sys.exit(1)
@@ -75,7 +67,7 @@ def main():
             "generated_problems": reply
         })
 
-    # write out all Q&A pairs
+    # write out all problem pairs
     with open(output_path, "w", encoding="utf-8") as out_f:
         json.dump(results, out_f, ensure_ascii=False, indent=2)
 
