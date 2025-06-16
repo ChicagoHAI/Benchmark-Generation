@@ -1,78 +1,108 @@
+#!/usr/bin/env python3
+import argparse
 import json
+import re
 import sys
 import requests
 
-url = "http://indigo.cs.uchicago.edu:8000/v1/chat/completions"
-headers = {"Content-Type": "application/json"}
+API_URL = "http://indigo.cs.uchicago.edu:8000/v1/chat/completions"
+HEADERS = {"Content-Type": "application/json"}
 
-data = {
-    "model": "Qwen/Qwen2.5-7B-Instruct",
-    "messages": []
-}
-
-def chat(sentence: str) -> dict:
-    user_message = {"role": "user", "content": sentence}
-    data["messages"].append(user_message)
-    resp = requests.post(url, headers=headers, json=data)
-    return resp.json()
-
-def chat_message(sentence: str) -> str:
-    response = chat(sentence)
-    assistant_message = {
-        "role": "assistant",
-        "content": response["choices"][0]["message"]["content"]
+def chat_message(prompt: str) -> str:
+    """Send one‐shot prompt, return the assistant’s raw content."""
+    payload = {
+        "model": "Qwen/Qwen2.5-7B-Instruct",
+        "messages": [
+            {"role": "user", "content": prompt}
+        ]
     }
-    data["messages"].append(assistant_message)
-    return assistant_message["content"]
+    resp = requests.post(API_URL, headers=HEADERS, json=payload)
+    resp.raise_for_status()
+    return resp.json()["choices"][0]["message"]["content"]
 
-def load_problems(json_path: str) -> list[str]:
-    with open(json_path, 'r', encoding='utf-8') as f:
+def load_problems(path: str) -> list[str]:
+    with open(path, encoding="utf-8") as f:
         obj = json.load(f)
-
     probs = obj.get("problems")
-    if not isinstance(probs, list):
-        raise ValueError(f"Expected 'problems' to be a list, got {type(probs)}")
-    if any(not isinstance(x, str) for x in probs):
-        raise ValueError("All items in 'problems' must be strings")
+    if not isinstance(probs, list) or any(not isinstance(x, str) for x in probs):
+        raise ValueError("'problems' must be a list of strings")
     return probs
 
-def main():
-    if len(sys.argv) not in (2, 3):
-        print(f"Usage: {sys.argv[0]} ./GSM8k/failing_questions.json [out.json]", file=sys.stderr)
-        sys.exit(1)
+def parse_generated(reply: str) -> list[str]:
+    """Try to JSON‐parse; else split lines & strip bullets."""
+    text = reply.strip()
+    if text.startswith("[") and text.endswith("]"):
+        try:
+            arr = json.loads(text)
+            if all(isinstance(x, str) for x in arr):
+                return arr
+        except json.JSONDecodeError:
+            pass
 
-    input_path = sys.argv[1]
-    output_path = sys.argv[2] if len(sys.argv) == 3 else "generated_failing_questions.json"
+    lines = []
+    for line in text.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        # strip leading numbers like "1. " or "2) "
+        line = re.sub(r"^\d+[\.\)]\s*", "", line)
+        lines.append(line)
+    return lines
+
+def build_parser():
+    p = argparse.ArgumentParser(
+        description="Take each problem, ask LLM to generate N variants, save JSON."
+    )
+    p.add_argument("input", help="JSON file with top‐level 'problems': [\"…\",…]")
+    p.add_argument(
+        "-o", "--output",
+        default="generated.json",
+        help="Output path for JSON results (default: %(default)s)"
+    )
+    p.add_argument(
+        "-n", "--num",
+        type=int,
+        default=5,
+        help="How many variants to generate per problem (default: %(default)s)"
+    )
+    return p
+
+def main():
+    args = build_parser().parse_args()
 
     try:
-        problems = load_problems(input_path)
+        problems = load_problems(args.input)
     except Exception as e:
-        print(f"Error loading problems: {e}", file=sys.stderr)
-        sys.exit(2)
+        print(f"Error loading '{args.input}': {e}", file=sys.stderr)
+        sys.exit(1)
 
     results = []
+    total = len(problems)
     for idx, prob in enumerate(problems, 1):
-        print(f"[{idx}/{len(problems)}]→ Sending prompt to LLM…", end="", flush=True)
+        print(f"[{idx}/{total}] Generating {args.num} variants…", end="", flush=True)
+        prompt = (
+            f"""{prob}
+                Generate {args.num} similar math problems by modifying the numbers. No need to solve. \
+                Output only a JSON array of strings, e.g.: \
+                ["5+3=?", "7-2=?", …]. \
+                """)
         try:
-            reply = chat_message(prob + " Generate a similar math problem by modifying the numbers. No need to solve the problems. \
-                                Output only the new problem. Don't add anything unrelated.")
-            print(" got response.")
+            raw = chat_message(prompt)
+            generated = parse_generated(raw)
+            print(" done.")
         except Exception as e:
             print(f" ERROR: {e}")
-            reply = None
-        # clear the context history for each generation
-        data["messages"].clear()
+            generated = []
+
         results.append({
-            "original_problems": prob,
-            "generated_problems": reply
+            "original": prob,
+            "generated": generated
         })
 
-    # write out all problem pairs
-    with open(output_path, "w", encoding="utf-8") as out_f:
+    with open(args.output, "w", encoding="utf-8") as out_f:
         json.dump(results, out_f, ensure_ascii=False, indent=2)
 
-    print(f"\nDone. Wrote {len(results)} entries to {output_path}")
-
+    print(f"\nWrote {len(results)} entries to '{args.output}'.")
 
 if __name__ == "__main__":
     main()
