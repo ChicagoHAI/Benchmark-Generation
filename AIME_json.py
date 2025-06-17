@@ -36,7 +36,7 @@ def query_model(prompt: str) -> str:
     payload = {
         "model":       MODEL_NAME,
         "prompt":      prompt,
-        "max_tokens":  4096,
+        "max_tokens":  8000,
         "temperature": 0.0
     }
     resp = requests.post(f"{BASE_URL}/completions", headers=headers, json=payload)
@@ -45,44 +45,55 @@ def query_model(prompt: str) -> str:
 
 # ── Main ───────────────────────────────────────────────────────────────────────
 def main():
-    # Optional second arg is the output JSON path
     out_path = sys.argv[1] if len(sys.argv) == 2 else "evaluation_results.json"
 
-    results = []
+    problems  = []
+    solutions = []
+    answers   = []
+    labels    = []
+
     correct = 0
     total   = len(test_ds)
 
     for i, example in enumerate(test_ds, start=1):
-        question   = example["Question"]
-        gt_answer  = extract_answer(example["Answer"])
-        prompt     = format_prompt(question)
-        raw_output = query_model(prompt)
-        solution   = get_first_answer(raw_output)
-        pred_answer= extract_answer(solution)
-        label      = (pred_answer == gt_answer)
+        question    = example["Question"]
+        gt_answer   = extract_answer(example["Answer"])
+        prompt      = format_prompt(question)
+        raw_output  = query_model(prompt)
+        llm_answer  = get_first_answer(raw_output)
+        pred_answer = extract_answer(llm_answer)
+        if (pred_answer == gt_answer):
+            is_correct  = "correct"
+        else:
+            is_correct = "wrong"
 
         # Console logging
         print(f"[{i}/{total}] Q: {question}")
-        print("  Raw LLM output:", raw_output)
-        print("  Parsed answer:", solution, "| GT:", gt_answer, "| Correct?", label)
+        # print("  Raw LLM output:", raw_output)
+        print(f"  Parsed answer: {llm_answer} | GT: {gt_answer} | Correct? {is_correct}")
 
-        if label:
+        # collect for final JSON
+        problems.append(question)
+        solutions.append(gt_answer)
+        answers.append(llm_answer)
+        labels.append(is_correct)
+
+        if is_correct == "correct":
             correct += 1
-
-        # Collect for JSON
-        results.append({
-            "problem":   question,
-            "solution":  solution,
-            "answer":    gt_answer,
-            "label":     label
-        })
 
     accuracy = correct / total if total else 0
     print(f"\n✅ Accuracy: {correct}/{total} = {accuracy:.2%}")
 
-    # Dump all records to JSON
+    # build output dict
+    out_dict = {
+        "problems":  problems,
+        "solutions": solutions,
+        "answers":   answers,
+        "label":     labels
+    }
+
     with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(results, f, ensure_ascii=False, indent=2)
+        json.dump(out_dict, f, ensure_ascii=False, indent=2)
 
     print(f"Wrote {total} records to '{out_path}'")
 
